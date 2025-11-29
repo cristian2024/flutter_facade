@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_facade/ui/screen/success_screen.dart';
 import 'package:flutter_facade/ui/screen/transfer_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -23,7 +24,12 @@ class MainApp extends StatelessWidget {
           ),
         ),
       ),
-      home: TransferScreen(),
+      routes: {
+        SuccessScreen.routeName: (context) => SuccessScreen(),
+        TransferScreen.routeName: (context) => TransferScreen(),
+      },
+      initialRoute: SuccessScreen.routeName,
+      
     );
   }
 }

@@ -2,12 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_facade/domain/account_type.dart';
 import 'package:flutter_facade/domain/models/account_model.dart';
+import 'package:flutter_facade/ui/screen/success_screen.dart';
 import 'package:flutter_facade/ui/utils/currency_utils.dart';
 import 'package:flutter_facade/ui/utils/theme_extension.dart';
 import 'package:flutter_facade/ui/widgets/account_card.dart';
 
 class TransferScreen extends StatefulWidget {
   const TransferScreen({super.key});
+
+  static const String routeName = 'transfer_screen';
 
   @override
   State<TransferScreen> createState() => _TransferScreenState();
@@ -133,7 +136,12 @@ class _TransferScreenState extends State<TransferScreen> {
 
               Align(
                 child: ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    // TODO(Cristian): programar parametros para navegación correcta
+                    Navigator.of(
+                      context,
+                    ).pushReplacementNamed(SuccessScreen.routeName);
+                  },
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     mainAxisAlignment: MainAxisAlignment.start,
@@ -143,7 +151,12 @@ class _TransferScreenState extends State<TransferScreen> {
                         style: textTheme.bodyMedium,
                       ),
                       const SizedBox(width: 8),
-                      Icon(Icons.arrow_forward),
+                      Hero(
+                        tag: 'succes_animation',
+                        child: Icon(
+                          Icons.arrow_forward,
+                        ),
+                      ),
                     ],
                   ),
                 ),
