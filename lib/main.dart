@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_facade/application/injection.dart';
 import 'package:flutter_facade/ui/screen/success_screen.dart';
 import 'package:flutter_facade/ui/screen/transfer_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 void main() {
+  inject();
   runApp(const MainApp());
 }
 
@@ -28,7 +30,7 @@ class MainApp extends StatelessWidget {
         SuccessScreen.routeName: (context) => SuccessScreen(),
         TransferScreen.routeName: (context) => TransferScreen(),
       },
-      initialRoute: SuccessScreen.routeName,
+      initialRoute: TransferScreen.routeName,
       
     );
   }
