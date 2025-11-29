@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_facade/ui/screen/success_screen.dart';
+import 'package:flutter_facade/ui/screen/transfer_screen.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 void main() {
   runApp(const MainApp());
@@ -9,12 +12,24 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: Scaffold(
-        body: Center(
-          child: Text('Hello World!'),
+    final ThemeData themeData = ThemeData.light();
+    return MaterialApp(
+      theme: themeData.copyWith(
+        textTheme: GoogleFonts.plusJakartaSansTextTheme(
+          themeData.textTheme.copyWith(
+            titleLarge: TextStyle(
+              color: themeData.primaryColor,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
         ),
       ),
+      routes: {
+        SuccessScreen.routeName: (context) => SuccessScreen(),
+        TransferScreen.routeName: (context) => TransferScreen(),
+      },
+      initialRoute: SuccessScreen.routeName,
+      
     );
   }
 }
