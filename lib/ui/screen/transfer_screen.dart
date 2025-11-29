@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_facade/application/injection.dart';
-import 'package:flutter_facade/domain/account_type.dart';
 import 'package:flutter_facade/domain/models/account_model.dart';
+import 'package:flutter_facade/domain/models/user_model.dart';
+import 'package:flutter_facade/ui/provider/accounts/accounts_cubit.dart';
 import 'package:flutter_facade/ui/provider/transfer/transfer_cubit.dart';
 import 'package:flutter_facade/ui/screen/success_screen.dart';
 import 'package:flutter_facade/ui/utils/currency_utils.dart';
@@ -22,9 +23,22 @@ class TransferScreen extends StatelessWidget {
         BlocProvider(
           create: (context) => TransferCubit(readIt()),
         ),
-        //añadir bloc para consultar lista de cuentas del usuario
+        BlocProvider(
+          create: (context) => AccountsCubit(
+            UserModel(name: 'Pragma worker', id: '12341234'),
+            useCase: readIt(),
+          )..getAccountsOfUser(),
+          lazy: false,
+        ),
       ],
-      child: const _TransferBody(),
+      child: Scaffold(
+        body: SafeArea(
+          child: Padding(
+            padding: EdgeInsets.all(16),
+            child: const _TransferBody(),
+          ),
+        ),
+      ),
     );
   }
 }
@@ -35,159 +49,160 @@ class _TransferBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = context.getTextTheme();
-    final accounts = [
-      AccountModel(
-        number: "12341234",
-        type: AccountType.ahorros,
-        balance: 20000,
-      ),
-      AccountModel(
-        number: "12341234",
-        type: AccountType.corriente,
-        balance: 30000,
-      ),
-    ];
 
-    return Scaffold(
-      body: SafeArea(
-        child: BlocBuilder<TransferCubit, TransferState>(
-          builder: (context, state) {
-            final AccountModel? selectedAccount = state.selectedAccount;
+    final transferCubit = context.watch<TransferCubit>();
+    final transferState = transferCubit.state;
 
-            String strValue = state.value != null
-                ? state.value?.getSimpleCurrencyFormat() ?? ' '
-                : '';
-            return Padding(
-              padding: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Text(
-                    "Transfiere el dinero",
-                    style: textTheme.titleLarge,
-                  ),
+    final accountsCubit = context.watch<AccountsCubit>();
+    final accountsState = accountsCubit.state;
 
-                  const SizedBox(height: 12),
-                  Text(
-                    "Selecciona una de tus cuentas",
-                    style: textTheme.titleMedium?.copyWith(
-                      color: context.getThemeData().primaryColor,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      children: accounts
-                          .map(
-                            (account) => AccountCard(
-                              account,
-                              isSelected: account == state.selectedAccount,
-                              select: () {
-                                context
-                                    .read<TransferCubit>()
-                                    .setSelectedAccount(account);
-                              },
-                            ),
-                          )
-                          .toList(),
-                    ),
-                  ),
-                  if (selectedAccount != null) ...[
-                    const SizedBox(height: 12),
-                    Text(
-                      "Selecciona el valor a transferir",
-                      style: textTheme.titleMedium?.copyWith(
-                        color: context.getThemeData().primaryColor,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Text(
-                      "tienes disponible: ${selectedAccount.balance.getSimpleCurrencyFormat()}",
-                      style: textTheme.labelSmall,
-                    ),
-                    TextFormField(
-                      decoration: InputDecoration(
-                        labelText: "Cuanto quieres transferir?: $strValue",
-                        labelStyle: textTheme.labelSmall,
-                      ),
-                      inputFormatters: [
-                        FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
-                      ],
-                      autovalidateMode: AutovalidateMode.onUserInteraction,
-                      maxLength: 20,
+    final AccountModel? selectedAccount = transferState.selectedAccount;
 
-                      keyboardType: TextInputType.number,
-                      onChanged: (newValue) {
-                        context.read<TransferCubit>().setValue(
-                          double.tryParse(newValue) ?? 0,
+    String strValue = transferState.value != null
+        ? transferState.value?.getSimpleCurrencyFormat() ?? ' '
+        : '';
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Text(
+          "Transfiere el dinero",
+          style: textTheme.titleLarge,
+        ),
+
+        const SizedBox(height: 12),
+        Text(
+          "Selecciona una de tus cuentas",
+          style: textTheme.titleMedium?.copyWith(
+            color: context.getThemeData().primaryColor,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        if (accountsState.status.isLoading)
+          Center(child: CircularProgressIndicator())
+        else
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: (accountsState.accounts ?? [])
+                  .map(
+                    (account) => AccountCard(
+                      account,
+                      isSelected: account == transferState.selectedAccount,
+                      select: () {
+                        transferCubit.setSelectedAccount(
+                          account,
                         );
                       },
-                      validator: (newValue) {
-                        final numValue = (double.tryParse(newValue ?? '') ?? 0);
-                        if (numValue > selectedAccount!.balance) {
-                          return "No tienes saldo suficiente";
-                        }
-                        return null;
-                      },
                     ),
-                    const SizedBox(height: 12),
-                    Text(
-                      "Digita el numero de cuenta a transferir",
-                      style: textTheme.titleMedium?.copyWith(
-                        color: context.getThemeData().primaryColor,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    TextField(
-                      decoration: InputDecoration(
-                        labelText: "Numero de cuenta a transferir",
-                        labelStyle: textTheme.labelSmall,
-                      ),
-                      onChanged: (value) {
-                        context.read<TransferCubit>().setAccountToSend(value);
-                      },
-                    ),
-                    const SizedBox(height: 8),
-                  ],
+                  )
+                  .toList(),
+            ),
+          ),
+        if (selectedAccount != null) ...[
+          const SizedBox(height: 12),
+          Text(
+            "Selecciona el valor a transferir",
+            style: textTheme.titleMedium?.copyWith(
+              color: context.getThemeData().primaryColor,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          Text(
+            "tienes disponible: ${selectedAccount.balance.getSimpleCurrencyFormat()}",
+            style: textTheme.labelSmall,
+          ),
+          TextFormField(
+            decoration: InputDecoration(
+              labelText: "Cuanto quieres transferir?: $strValue",
+              labelStyle: textTheme.labelSmall,
+            ),
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+            ],
+            autovalidateMode: AutovalidateMode.onUserInteraction,
+            maxLength: 20,
 
-                  Align(
-                    child: ElevatedButton(
-                      onPressed: !state.canContinue
-                          ? null
-                          : () {
-                              // TODO(Cristian): programar parametros para navegación correcta
-                              Navigator.of(
-                                context,
-                              ).pushReplacementNamed(
-                                SuccessScreen.routeName,
-                              );
-                            },
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Transferir",
-                            style: textTheme.bodyMedium,
-                          ),
-                          const SizedBox(width: 8),
-                          Hero(
-                            tag: 'succes_animation',
-                            child: Icon(
-                              Icons.arrow_forward,
-                            ),
-                          ),
-                        ],
+            keyboardType: TextInputType.number,
+            onChanged: (newValue) {
+              transferCubit.setValue(
+                double.tryParse(newValue) ?? 0,
+              );
+            },
+            validator: (newValue) {
+              final numValue = (double.tryParse(newValue ?? '') ?? 0);
+              if (numValue > selectedAccount.balance) {
+                return "No tienes saldo suficiente";
+              }
+              return null;
+            },
+          ),
+          const SizedBox(height: 12),
+          Text(
+            "Digita el numero de cuenta a transferir",
+            style: textTheme.titleMedium?.copyWith(
+              color: context.getThemeData().primaryColor,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          TextField(
+            decoration: InputDecoration(
+              labelText: "Numero de cuenta a transferir",
+              labelStyle: textTheme.labelSmall,
+            ),
+            onChanged: (value) {
+              transferCubit.setAccountToSend(value);
+            },
+          ),
+          const SizedBox(height: 8),
+        ],
+
+        Align(
+          child: BlocListener<TransferCubit, TransferState>(
+            listenWhen: (previous, current) {
+              return previous != current && current.status.hasBeenSuccesful;
+            },
+            listener: (context, state) {
+              //ya se valida en el "listenWhen" que el estado sea exitoso, no es necesaria mas validaciones
+              Navigator.of(
+                context,
+              ).pushReplacementNamed(
+                SuccessScreen.routeName,
+              );
+            },
+            child: ElevatedButton(
+              onPressed: !transferState.canContinue
+                  ? null
+                  : () {
+                      transferCubit.transfer();
+                    },
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  if (transferState.status.isLoading)
+                    Center(
+                      child: CircularProgressIndicator(),
+                    )
+                  else ...[
+                    Text(
+                      "Transferir",
+                      style: textTheme.bodyMedium,
+                    ),
+                    const SizedBox(width: 8),
+                    Hero(
+                      tag: 'succes_animation',
+                      child: Icon(
+                        Icons.arrow_forward,
                       ),
                     ),
-                  ),
+                  ],
                 ],
               ),
-            );
-          },
+            ),
+          ),
         ),
-      ),
+      ],
     );
   }
 }

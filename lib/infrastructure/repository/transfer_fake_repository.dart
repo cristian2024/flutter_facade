@@ -10,6 +10,6 @@ class TransferFakeRepository implements TransferRepository {
     required String toAccoutNumber,
   }) async {
     // TODO(Cristian): implementar casos controlados de error
-    Future.delayed(Duration(seconds: 1));
+    await Future.delayed(Duration(seconds: 2));
   }
 }

@@ -15,11 +15,13 @@ class TransferCubit extends Cubit<TransferState> {
     // TODO(Cristian): mapeo y trabajo de errores
     // state.isValid valida si las variables son nulas o no
     if (state.isValid) {
+      emit(state.copyWith(status: Status.loading));
       await _facade.transfer(
         account: state.selectedAccount!,
         value: state.value!,
         toAccoutNumber: state.accountToSend!,
       );
+      emit(state.copyWith(status: Status.success));
     }
   }
 

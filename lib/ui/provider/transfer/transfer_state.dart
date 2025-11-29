@@ -47,5 +47,6 @@ class TransferState extends Equatable {
     selectedAccount,
     accountToSend,
     value,
+    status,
   ];
 }

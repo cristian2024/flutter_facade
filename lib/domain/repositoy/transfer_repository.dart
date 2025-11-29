@@ -6,7 +6,5 @@ abstract interface class TransferRepository {
     required AccountModel account,
     required double value,
     required String toAccoutNumber,
-  }) async {
-    //TODO(Cristian): validar algun tipo de flujo
-  }
+  });
 }
