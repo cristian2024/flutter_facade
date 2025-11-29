@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_facade/application/exceptions.dart';
 import 'package:flutter_facade/application/injection.dart';
 import 'package:flutter_facade/domain/models/account_model.dart';
 import 'package:flutter_facade/domain/models/user_model.dart';
@@ -10,6 +11,7 @@ import 'package:flutter_facade/ui/screen/success_screen.dart';
 import 'package:flutter_facade/ui/utils/currency_utils.dart';
 import 'package:flutter_facade/ui/utils/theme_extension.dart';
 import 'package:flutter_facade/ui/widgets/account_card.dart';
+import 'package:flutter_facade/ui/widgets/alert_exception.dart';
 
 class TransferScreen extends StatelessWidget {
   const TransferScreen({super.key});
@@ -160,10 +162,18 @@ class _TransferBody extends StatelessWidget {
         Align(
           child: BlocListener<TransferCubit, TransferState>(
             listenWhen: (previous, current) {
-              return previous != current && current.status.hasBeenSuccesful;
+              return (previous != current && current.status.hasBeenSuccesful) ||
+                  current.status.hasError;
             },
             listener: (context, state) {
-              //ya se valida en el "listenWhen" que el estado sea exitoso, no es necesaria mas validaciones
+              if (state.status.hasError) {
+                AlertException.showAlert(
+                  context,
+                  exception: state.exception ?? ErrorTransferingException(),
+                );
+                return;
+              }
+
               Navigator.of(
                 context,
               ).pushReplacementNamed(
@@ -174,6 +184,7 @@ class _TransferBody extends StatelessWidget {
               onPressed: !transferState.canContinue
                   ? null
                   : () {
+                      
                       transferCubit.transfer();
                     },
               child: Row(

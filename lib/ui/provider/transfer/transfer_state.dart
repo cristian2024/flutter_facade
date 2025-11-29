@@ -5,11 +5,13 @@ class TransferState extends Equatable {
   final String? accountToSend;
   final double? value;
   final Status status;
+  final CustomException? exception;
 
   const TransferState({
     this.selectedAccount,
     this.accountToSend,
     this.value,
+    this.exception,
     this.status = Status.ready,
   });
 
@@ -18,12 +20,14 @@ class TransferState extends Equatable {
     String? accountToSend,
     double? value,
     Status? status,
+    CustomException? exception,
   }) {
     Status newStatus = status ?? this.status;
     if (this.status == Status.error) {
       newStatus = status ?? Status.ready;
     }
     return TransferState(
+      exception: exception,
       selectedAccount: selectedAccount ?? this.selectedAccount,
       accountToSend: accountToSend ?? this.accountToSend,
       value: value ?? this.value,
@@ -48,5 +52,6 @@ class TransferState extends Equatable {
     accountToSend,
     value,
     status,
+    exception,
   ];
 }

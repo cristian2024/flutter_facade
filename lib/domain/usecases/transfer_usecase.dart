@@ -17,6 +17,6 @@ class TransferUsecase {
     token,
     account: account,
     value: value,
-    toAccoutNumber: toAccoutNumber,
+    toAccoutId: toAccoutNumber,
   );
 }

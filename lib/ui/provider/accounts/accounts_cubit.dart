@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_facade/application/exceptions.dart';
 import 'package:flutter_facade/domain/models/account_model.dart';
 import 'package:flutter_facade/domain/models/user_model.dart';
 import 'package:flutter_facade/domain/usecases/account_usecase.dart';
@@ -21,13 +22,21 @@ class AccountsCubit extends Cubit<AccountsState> {
 
     emit(state.copyWith(status: Status.loading));
 
-    final list = await _useCase.getAccountsOfUser(user);
+    try {
+      final list = await _useCase.getAccountsOfUser(user);
 
-    emit(
-      state.copyWith(
-        status: Status.success,
-        accounts: list,
-      ),
-    );
+      emit(
+        state.copyWith(
+          status: Status.success,
+          accounts: list,
+        ),
+      );
+    } on CustomException {
+      emit(
+        state.copyWith(
+          status: Status.error,
+        ),
+      );
+    }
   }
 }

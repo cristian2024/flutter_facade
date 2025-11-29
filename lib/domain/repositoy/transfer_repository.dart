@@ -5,6 +5,6 @@ abstract interface class TransferRepository {
     String token, {
     required AccountModel account,
     required double value,
-    required String toAccoutNumber,
+    required String toAccoutId,
   });
 }

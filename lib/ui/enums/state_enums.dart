@@ -11,4 +11,7 @@ enum Status{
   bool get hasBeenSuccesful{
     return this == Status.success;
   }
+  bool get hasError{
+    return this == Status.error;
+  }
 }
