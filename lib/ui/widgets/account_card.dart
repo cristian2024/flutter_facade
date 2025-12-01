@@ -47,7 +47,7 @@ class AccountCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(account.type.titleValue),
-                  Text(account.number),
+                  Text(account.id),
                 ],
               ),
               SizedBox(width: 8),
