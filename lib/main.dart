@@ -27,11 +27,25 @@ class MainApp extends StatelessWidget {
         ),
       ),
       routes: {
-        SuccessScreen.routeName: (context) => SuccessScreen(),
-        TransferScreen.routeName: (context) => TransferScreen(),
+        SuccessScreen.routeName: (context) => SuccessScreen(
+          onPopScreen: () {
+            //Se navega a una versión nueva de la pantalla de transferencia para formatear valores antiguos
+            Navigator.of(
+              context,
+            ).pushReplacementNamed(TransferScreen.routeName);
+          },
+        ),
+        TransferScreen.routeName: (context) => TransferScreen(
+          onTransferSuccess: () {
+            Navigator.of(
+              context,
+            ).pushReplacementNamed(
+              SuccessScreen.routeName,
+            );
+          },
+        ),
       },
       initialRoute: TransferScreen.routeName,
-      
     );
   }
 }

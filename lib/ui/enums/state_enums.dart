@@ -8,7 +8,7 @@ enum Status{
   bool get isLoading{
     return this == Status.loading;
   }
-  bool get hasBeenSuccesful{
+  bool get hasBeenSuccessful{
     return this == Status.success;
   }
   bool get hasError{

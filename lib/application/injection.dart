@@ -14,6 +14,7 @@ import 'package:get_it/get_it.dart';
 final _instance = GetIt.asNewInstance();
 
 void inject() {
+  _instance.reset();
   //repositorios
   final TransferRepository transferRepository = TransferFakeRepository();
   final AccountRepository accountRepository = AccountFakeRepository();
@@ -44,6 +45,6 @@ void inject() {
 }
 
 T readIt<T extends Object>() {
-  //TODO(Cristian): validar cuando no se ha inyectado el objeto T
+  //TODO(Cristian): validar cuando no se ha inyectado el objeto
   return _instance.get();
 }

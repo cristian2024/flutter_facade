@@ -3,12 +3,12 @@ import 'package:flutter_facade/domain/models/account_model.dart';
 
 final List<AccountModel> fakeAccounts = [
   AccountModel(
-    id: "12341234",
+    id: "Principal",
     type: AccountType.ahorros,
     balance: 20000,
   ),
   AccountModel(
-    id: "12341234",
+    id: "1234134",
     type: AccountType.ahorros,
     balance: 100000,
   ),
