@@ -35,9 +35,7 @@ void main() {
               accounts: fakeAccounts,
             );
 
-            final errorAccountState = AccountsState(
-              status: Status.error,
-            );
+
 
             //transfer states
             final initialState = TransferState(
@@ -52,10 +50,6 @@ void main() {
               status: Status.success,
             );
 
-            final errorState = TransferState(
-              status: Status.error,
-              exception: ErrorTransferingException(),
-            );
 
             when(() => accountsCubit.state).thenReturn(loadingAccountState);
 
