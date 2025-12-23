@@ -4,6 +4,54 @@ import 'package:flutter_facade/ui/utils/account_utils.dart';
 import 'package:flutter_facade/ui/utils/currency_utils.dart';
 import 'package:flutter_facade/ui/utils/theme_extension.dart';
 
+/// ------------------------------------------------------------
+/// AccountCard
+/// ------------------------------------------------------------
+///
+/// Widget que muestra la información básica de una cuenta.
+/// Incluye el tipo de cuenta, su identificador y el saldo
+/// formateado.
+///
+/// Está diseñado para usarse en listas donde el usuario debe
+/// seleccionar una cuenta. Puede mostrar un estado visual de
+/// selección y ejecutar un callback cuando es tocado.
+///
+/// ------------------------------------------------------------
+/// Parámetros:
+/// ------------------------------------------------------------
+///
+/// * [account]
+///   Instancia de `AccountModel` que contiene los datos a mostrar.
+///
+/// * [isSelected]
+///   Indica si el widget debe mostrarse resaltado.
+///
+/// * [select]
+///   Callback opcional que se ejecuta al presionar la tarjeta.
+///
+/// ------------------------------------------------------------
+/// Comportamiento:
+/// ------------------------------------------------------------
+///
+/// - Cambia el borde y el tintado cuando está seleccionado.
+/// - Al tocarlo, ejecuta `select` si está definido.
+/// - Utiliza utilidades de formato para mostrar información
+///   del tipo de cuenta y su saldo.
+///
+/// ------------------------------------------------------------
+/// Ejemplo:
+/// ------------------------------------------------------------
+///
+/// ```dart
+/// AccountCard(
+///   account,
+///   isSelected: isActive,
+///   select: onTap,
+/// )
+/// ```
+///
+/// ------------------------------------------------------------
+
 class AccountCard extends StatelessWidget {
   const AccountCard(
     this.account, {
