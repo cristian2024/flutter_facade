@@ -75,7 +75,7 @@ Para tomar una decisión informada sobre el uso del patrón de diseño Facade, e
 > Aplica el patrón cuando quieras reducir el acoplamiento entre el cliente y varios subsistemas, permitiendo que estos evolucionen sin impactar directamente a los consumidores.
 
 > [!TIP]  
-> Utiliza Observer cuando desees orquestar flujos sin necesidad de implementar logica extra en la vista.
+> Utiliza Facade cuando desees orquestar flujos sin necesidad de implementar logica extra en la vista.
 
 
 
