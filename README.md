@@ -22,7 +22,7 @@ Este proyecto hace parte del artefacto asociado a los deseables en el uso del pa
 
 A continuación se comparte el diagrama de clases del proyecto, enfocado en la implementación del patrón de diseño.
 <p style="text-align: center;">
-  <img src=".readme_assets/facade.png" alt="Diagrama de clases del patrón Facade" width="600" height="auto" />
+  <img src=".readme_assets/facade.png" alt="Diagrama de clases del patrón Facade" width="601" height="auto" />
 </p>
 
 
